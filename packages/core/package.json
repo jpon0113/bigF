@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "jpon-cli core",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "",
@@ -17,6 +17,6 @@
     "test": "echo \"Run test core\""
   },
   "dependencies": {
-    "@jpon-cli/utils": "^1.0.0"
+    "@jpon-cli/utils": "^1.0.1"
   }
 }
