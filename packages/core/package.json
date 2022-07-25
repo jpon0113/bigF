@@ -1,0 +1,22 @@
+{
+  "name": "@jpon-cli/core",
+  "version": "1.0.0",
+  "description": "jpon-cli core",
+  "author": "jpon0113 <jpongama@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/core.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Run test core\""
+  },
+  "dependencies": {
+    "@jpon-cli/utils": "^1.0.0"
+  }
+}
