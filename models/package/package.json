@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/package",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "> TODO: description",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "https://github.com/jpon0113/bigF#readme",
@@ -27,9 +27,9 @@
     "url": "https://github.com/jpon0113/bigF/issues"
   },
   "dependencies": {
-    "@jpon-cli/format-path": "^1.0.3",
+    "@jpon-cli/format-path": "^1.0.4",
     "@jpon-cli/get-npm-info": "file:../../utils/get-npm-info",
-    "@jpon-cli/utils": "^1.0.3",
+    "@jpon-cli/utils": "^1.0.4",
     "fs-extra": "^9.0.1",
     "npminstall": "^4.10.0",
     "path-exists": "^4.0.0",

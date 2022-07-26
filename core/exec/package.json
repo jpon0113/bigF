@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/exec",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "> TODO: description",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "https://github.com/jpon0113/bigF#readme",
@@ -27,8 +27,8 @@
     "url": "https://github.com/jpon0113/bigF/issues"
   },
   "dependencies": {
-    "@jpon-cli/log": "^1.0.3",
-    "@jpon-cli/package": "^1.0.3"
+    "@jpon-cli/log": "^1.0.4",
+    "@jpon-cli/package": "^1.0.4"
   },
   "gitHead": "ac46f9ec4ac85677506005a9241ac222aedfecf5"
 }
