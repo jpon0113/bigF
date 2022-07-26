@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "jpon-cli utils",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "",
@@ -19,7 +19,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {    
+  "dependencies": {
     "pkg-dir": "^5.0.0"
   }
 }
