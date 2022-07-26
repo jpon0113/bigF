@@ -28,12 +28,12 @@
   },
   "dependencies": {
     "@jpon-cli/format-path": "^1.0.4",
-    "@jpon-cli/get-npm-info": "file:../../utils/get-npm-info",
+    "@jpon-cli/get-npm-info": "^1.0.4",
     "@jpon-cli/utils": "^1.0.4",
     "fs-extra": "^9.0.1",
     "npminstall": "^4.10.0",
     "path-exists": "^4.0.0",
     "pkg-dir": "^5.0.0"
   },
-  "gitHead": "ac46f9ec4ac85677506005a9241ac222aedfecf5"
+  "gitHead": "e7bd3bf941e2edb33e4e542241086b67d4f5627f"
 }
