@@ -1,5 +1,5 @@
 {
-  "name": "get-npm-info",
+  "name": "@jpon-cli/get-npm-info",
   "version": "1.0.3",
   "description": "> TODO: description",
   "author": "jpon0113 <jpongama@gmail.com>",
@@ -27,5 +27,6 @@
     "axios": "^0.21.0",
     "semver": "^7.3.4",
     "url-join": "^4.0.1"
-  }
+  },
+  "gitHead": "ac46f9ec4ac85677506005a9241ac222aedfecf5"
 }

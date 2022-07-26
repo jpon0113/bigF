@@ -27,12 +27,13 @@
     "url": "https://github.com/jpon0113/bigF/issues"
   },
   "dependencies": {
-    "@jpon-cli/format-path": "file:../../utils/format-path",
+    "@jpon-cli/format-path": "^1.0.3",
     "@jpon-cli/get-npm-info": "file:../../utils/get-npm-info",
-    "@jpon-cli/utils": "file:../../utils/utils",
+    "@jpon-cli/utils": "^1.0.3",
     "fs-extra": "^9.0.1",
     "npminstall": "^4.10.0",
     "path-exists": "^4.0.0",
     "pkg-dir": "^5.0.0"
-  }
+  },
+  "gitHead": "ac46f9ec4ac85677506005a9241ac222aedfecf5"
 }
