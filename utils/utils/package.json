@@ -18,5 +18,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {    
+    "pkg-dir": "^5.0.0"
   }
 }

@@ -20,7 +20,19 @@
     "test": "echo \"Run test core\""
   },
   "dependencies": {
-    "@jpon-cli/utils": "^1.0.2"
+    "@jpon-cli/log": "file:../../utils/log",
+    "@jpon-cli/get-npm-info": "file:../../utils/get-npm-info",
+    "@jpon-cli/init": "file:../../commands/init",
+    "@jpon-cli/exec": "file:../exec",
+    "colors": "^1.4.0",
+    "commander": "^6.2.1",
+    "dotenv": "^8.2.0",
+    "import-local": "^3.1.0",
+    "npmlog": "^6.0.2",
+    "path-exists": "^4.0.0",
+    "root-check": "^1.0.0",
+    "semver": "^7.3.7",
+    "user-home": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"
