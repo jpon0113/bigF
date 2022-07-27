@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "jpon-cli utils",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "",
@@ -20,8 +20,8 @@
     "access": "public"
   },
   "dependencies": {
-    "pkg-dir": "^5.0.0",
-    "cli-spinner": "^0.2.10"
+    "cli-spinner": "^0.2.10",
+    "pkg-dir": "^5.0.0"
   },
   "gitHead": "e7bd3bf941e2edb33e4e542241086b67d4f5627f"
 }

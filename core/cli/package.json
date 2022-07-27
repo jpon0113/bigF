@@ -1,6 +1,6 @@
 {
   "name": "@jpon-cli/core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "jpon-cli core",
   "author": "jpon0113 <jpongama@gmail.com>",
   "homepage": "",
@@ -20,8 +20,8 @@
     "test": "echo \"Run test core\""
   },
   "dependencies": {
-    "@jpon-cli/exec": "^1.0.5",
-    "@jpon-cli/get-npm-info": "^1.0.5",
+    "@jpon-cli/exec": "^1.0.6",
+    "@jpon-cli/get-npm-info": "^1.0.6",
     "@jpon-cli/log": "^1.0.5",
     "colors": "^1.4.0",
     "commander": "^6.2.1",
