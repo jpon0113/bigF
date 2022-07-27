@@ -14,7 +14,6 @@ const constant = require("./const");
 // any -> .js
 const pkg = require("../package.json");
 const log = require("@jpon-cli/log");
-const init = require("@jpon-cli/init");
 const exec = require("@jpon-cli/exec");
 
 const program = new commander.Command();
@@ -147,19 +146,6 @@ function checkUserHome() {
 function checkRoot() {
   const rootCheck = require("root-check");
   rootCheck();
-}
-// 檢查node版本
-function checkNodeVersion() {
-  // 獲取當前Node版本
-  const currentVersion = process.version;
-  // 比對最低版本
-  const lowestVersion = constant.LOWEST_NODE_VERSION;
-  // semver 比較
-  if (!semver.gte(currentVersion, lowestVersion)) {
-    throw new Error(
-      colors.red(`jpon-cli 需要安裝 v${lowestVersion} 以上版本的 Node.js`)
-    );
-  }
 }
 // 判斷package.json version
 function checkPkgVersion() {

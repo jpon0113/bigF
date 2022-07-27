@@ -22,7 +22,6 @@
   "dependencies": {
     "@jpon-cli/exec": "^1.0.5",
     "@jpon-cli/get-npm-info": "^1.0.5",
-    "@jpon-cli/init": "^1.0.5",
     "@jpon-cli/log": "^1.0.5",
     "colors": "^1.4.0",
     "commander": "^6.2.1",

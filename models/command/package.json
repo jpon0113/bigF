@@ -1,5 +1,5 @@
 {
-  "name": "@jpon-cli/init",
+  "name": "@jpon-cli/command",
   "version": "1.0.5",
   "description": "> TODO: description",
   "author": "jpon0113 <jpongama@gmail.com>",
@@ -26,20 +26,9 @@
   "bugs": {
     "url": "https://github.com/jpon0113/bigF/issues"
   },
-  "gitHead": "e7bd3bf941e2edb33e4e542241086b67d4f5627f",
   "dependencies": {
-    "@jpon-cli/command": "file:../../models/command",
-    "@jpon-cli/request": "file:../../utils/request",
     "@jpon-cli/log": "^1.0.5",
-    "@jpon-cli/package": "^1.0.5",
-    "@jpon-cli/utils": "file:../../utils/utils",
-    "ejs": "^3.1.5",
-    "fs-extra": "^9.0.1",
-    "glob": "^7.1.6",
-    "inquirer": "^7.3.3",
-    "kebab-case": "^1.0.0",
-    "semver": "^7.3.4",
-    "spinner": "^0.3.4",
-    "user-home": "^2.0.0"
+    "colors": "^1.4.0",
+    "semver": "^7.3.4"
   }
 }

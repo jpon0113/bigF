@@ -1,23 +1,23 @@
-"use strict";
-const path = require("path");
-const fse = require("fs-extra");
-const pkgDir = require("pkg-dir").sync;
-const npminstall = require("npminstall");
-const pathExists = require("path-exists").sync;
-const { isObject } = require("@jpon-cli/utils");
-const formatPath = require("@jpon-cli/format-path");
+'use strict';
+const path = require('path');
+const fse = require('fs-extra');
+const pkgDir = require('pkg-dir').sync;
+const npminstall = require('npminstall');
+const pathExists = require('path-exists').sync;
+const { isObject } = require('@jpon-cli/utils');
+const formatPath = require('@jpon-cli/format-path');
 const {
   getDefaultRegistry,
   getNpmLatestVersion,
-} = require("@jpon-cli/get-npm-info");
+} = require('@jpon-cli/get-npm-info');
 
 class Package {
   constructor(options) {
     if (!options) {
-      throw new Error("Package_Class的options參數不能為空！");
+      throw new Error('Package_Class的options參數不能為空！');
     }
     if (!isObject(options)) {
-      throw new Error("Package_Class的options參數必須為物件Object！");
+      throw new Error('Package_Class的options參數必須為物件Object！');
     }
     // package的目标路径
     this.targetPath = options.targetPath;
@@ -28,7 +28,7 @@ class Package {
     // package的version
     this.packageVersion = options.packageVersion;
     // package的緩存目錄前綴
-    this.cacheFilePathPrefix = this.packageName.replace("/", "_");
+    this.cacheFilePathPrefix = this.packageName.replace('/', '_');
   }
 
   async prepare() {
@@ -37,7 +37,7 @@ class Package {
     }
     // _@jpon-cli_core@1.0.2@@jpon-cli (緩存路徑)
     // @jpon-cli/core 1.0.2
-    if (this.packageVersion === "latest") {
+    if (this.packageVersion === 'latest') {
       this.packageVersion = await getNpmLatestVersion(this.packageName);
     }
   }
@@ -85,10 +85,12 @@ class Package {
     await this.prepare();
     // 1. 取得最新的npm模組版本
     const latestPackageVersion = await getNpmLatestVersion(this.packageName);
+    console.log('latestPackageVersion', latestPackageVersion);
     // 2. 查詢最新版本的path是否存在
     const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
     // 3. 如果不存在, 就安裝最新版本
     if (!pathExists(latestFilePath)) {
+      console.log('latestFilePath', latestFilePath);
       await npminstall({
         root: this.targetPath,
         storeDir: this.storeDir,
@@ -112,7 +114,7 @@ class Package {
       const dir = pkgDir(targetPath);
       if (dir) {
         // 2. 讀取package.json => require(xxx.json)
-        const pkgFile = require(path.resolve(dir, "package.json"));
+        const pkgFile = require(path.resolve(dir, 'package.json'));
         // 3. 尋找main/lib
         if (pkgFile && pkgFile.main) {
           // 4. path的兼容處理(macOS/windows)

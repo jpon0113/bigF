@@ -20,7 +20,8 @@
     "access": "public"
   },
   "dependencies": {
-    "pkg-dir": "^5.0.0"
+    "pkg-dir": "^5.0.0",
+    "cli-spinner": "^0.2.10"
   },
   "gitHead": "e7bd3bf941e2edb33e4e542241086b67d4f5627f"
 }
