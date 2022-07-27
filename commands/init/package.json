@@ -30,7 +30,7 @@
   "dependencies": {
     "@jpon-cli/command": "file:../../models/command",
     "@jpon-cli/log": "^1.0.5",
-    "@jpon-cli/package": "^1.0.6",
+    "@jpon-cli/package": "file:../../models/package",
     "@jpon-cli/request": "file:../../utils/request",
     "@jpon-cli/utils": "file:../../utils/utils",
     "ejs": "^3.1.5",

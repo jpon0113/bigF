@@ -85,12 +85,10 @@ class Package {
     await this.prepare();
     // 1. 取得最新的npm模組版本
     const latestPackageVersion = await getNpmLatestVersion(this.packageName);
-    console.log('latestPackageVersion', latestPackageVersion);
     // 2. 查詢最新版本的path是否存在
     const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
     // 3. 如果不存在, 就安裝最新版本
     if (!pathExists(latestFilePath)) {
-      console.log('latestFilePath', latestFilePath);
       await npminstall({
         root: this.targetPath,
         storeDir: this.storeDir,

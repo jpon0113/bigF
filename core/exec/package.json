@@ -27,8 +27,9 @@
     "url": "https://github.com/jpon0113/bigF/issues"
   },
   "dependencies": {
-    "@jpon-cli/log": "^1.0.5",
-    "@jpon-cli/package": "^1.0.6"
+    "@jpon-cli/log": "file:../../utils/log",
+    "@jpon-cli/package": "^1.0.6",
+    "@jpon-cli/utils": "file:../../utils/utils"
   },
   "gitHead": "e7bd3bf941e2edb33e4e542241086b67d4f5627f"
 }

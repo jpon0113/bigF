@@ -3,8 +3,7 @@
 const path = require('path');
 const Package = require('@jpon-cli/package');
 const log = require('@jpon-cli/log');
-const cp = require('child_process');
-// const { exec: spawn } = require('@imooc-cli-dev/utils');
+const { exec: spawn } = require('@jpon-cli/utils');
 
 const SETTINGS = {
   init: '@jpon-cli/init',
@@ -90,15 +89,6 @@ async function exec() {
       log.error(e.message);
     }
   }
-}
-
-function spawn(command, args, options) {
-  const win32 = process.platform === 'win32';
-
-  const cmd = win32 ? 'cmd' : command;
-  const cmdArgs = win32 ? ['/c'].concat(command, args) : args;
-
-  return cp.spawn(cmd, cmdArgs, options || {});
 }
 
 module.exports = exec;

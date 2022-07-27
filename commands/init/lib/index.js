@@ -10,13 +10,15 @@ const userHome = require('user-home');
 const log = require('@jpon-cli/log');
 const Command = require('@jpon-cli/command');
 const Package = require('@jpon-cli/package');
-const { spinnerStart, sleep } = require('@jpon-cli/utils');
+const { spinnerStart, sleep, execAsync } = require('@jpon-cli/utils');
 
 const getProjectTemplate = require('./getProjectTemplate');
 
 const TYPE_PROJECT = 'project';
 const TYPE_COMPONENT = 'component';
-
+const TEMPLATE_TYPE_NORMAL = 'normal';
+const TEMPLATE_TYPE_CUSTOM = 'custom';
+const WHITE_COMMAND = ['npm', 'cnpm'];
 class InitCommand extends Command {
   init() {
     this.projectName = this._argv[0] || '';
@@ -33,9 +35,154 @@ class InitCommand extends Command {
         this.projectInfo = projectInfo;
         await this.downloadTemplate();
         // 3. 安裝版型
+        await this.installTemplate();
       }
     } catch (e) {
       log.error(e.message);
+    }
+  }
+
+  checkCommand(cmd) {
+    if (WHITE_COMMAND.includes(cmd)) {
+      return cmd;
+    }
+    return null;
+  }
+
+  async execCommand(command, errMsg) {
+    let ret;
+    if (command) {
+      const cmdArray = command.split(' ');
+      const cmd = this.checkCommand(cmdArray[0]);
+      if (!cmd) {
+        throw new Error('指令不存在！指令：' + command);
+      }
+      const args = cmdArray.slice(1);
+      ret = await execAsync(cmd, args, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+    }
+    if (ret !== 0) {
+      throw new Error(errMsg);
+    }
+    return ret;
+  }
+
+  async installTemplate() {
+    if (this.templateInfo) {
+      if (!this.templateInfo.type) {
+        this.templateInfo.type = TEMPLATE_TYPE_NORMAL;
+      }
+      if (this.templateInfo.type === TEMPLATE_TYPE_NORMAL) {
+        // 標準安裝
+        await this.installNormalTemplate();
+      } else if (this.templateInfo.type === TEMPLATE_TYPE_CUSTOM) {
+        // 自定義安裝
+        await this.installCustomTemplate();
+      } else {
+        throw new Error('無法識別項目版型類型！');
+      }
+    } else {
+      throw new Error('項目版型資訊不存在！');
+    }
+  }
+
+  async installNormalTemplate() {
+    log.verbose('installNormalTemplate', this.templateNpm);
+    // 複製版型至當前目錄
+    let spinner = spinnerStart('正在安裝版型...');
+    await sleep();
+    const targetPath = process.cwd();
+    try {
+      const templatePath = path.resolve(
+        this.templateNpm.cacheFilePath,
+        'template'
+      );
+      fse.ensureDirSync(templatePath);
+      fse.ensureDirSync(targetPath);
+      fse.copySync(templatePath, targetPath);
+    } catch (e) {
+      throw e;
+    } finally {
+      spinner.stop(true);
+      log.success('版型安装成功');
+    }
+    const templateIgnore = this.templateInfo.ignore || [];
+    const ignore = ['**/node_modules/**', ...templateIgnore];
+    await this.ejsRender({ ignore });
+    const { installCommand, startCommand } = this.templateInfo;
+    // 依賴安裝
+    await this.execCommand(installCommand, '依賴安裝失敗！');
+    // 啟動指令執行
+    await this.execCommand(startCommand, '啟動執行指令失敗！');
+  }
+  async ejsRender(options) {
+    const dir = process.cwd();
+    const projectInfo = this.projectInfo;
+    return new Promise((resolve, reject) => {
+      glob(
+        '**',
+        {
+          cwd: dir,
+          ignore: options.ignore || '',
+          nodir: true,
+        },
+        function (err, files) {
+          if (err) {
+            reject(err);
+          }
+          Promise.all(
+            files.map((file) => {
+              const filePath = path.join(dir, file);
+              return new Promise((resolve1, reject1) => {
+                ejs.renderFile(filePath, projectInfo, {}, (err, result) => {
+                  if (err) {
+                    reject1(err);
+                  } else {
+                    fse.writeFileSync(filePath, result);
+                    resolve1(result);
+                  }
+                });
+              });
+            })
+          )
+            .then(() => {
+              resolve();
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        }
+      );
+    });
+  }
+  async installCustomTemplate() {
+    // 查詢客製化版型的入口文件
+    if (await this.templateNpm.exists()) {
+      const rootFile = this.templateNpm.getRootFilePath();
+      log.notice('rootFile', rootFile);
+      if (fs.existsSync(rootFile)) {
+        log.notice('開始執行客製化版型');
+        const templatePath = path.resolve(
+          this.templateNpm.cacheFilePath,
+          'template'
+        );
+        const options = {
+          templateInfo: this.templateInfo,
+          projectInfo: this.projectInfo,
+          sourcePath: templatePath,
+          targetPath: process.cwd(),
+        };
+        const code = `require('${rootFile}')(${JSON.stringify(options)})`;
+        await execAsync('node', ['-e', code], {
+          stdio: 'inherit',
+          cwd: process.cwd(),
+        });
+        log.success('客製化版型安裝成功');
+      } else {
+        throw new Error('客製化模板入口檔案不存在！');
+      }
     }
   }
 
@@ -133,7 +280,17 @@ class InitCommand extends Command {
     return this.getProjectInfo();
   }
   async getProjectInfo() {
+    function isValidName(v) {
+      return /^[a-zA-z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(
+        v
+      );
+    }
     let projectInfo = {};
+    let isProjectNameValid = false;
+    if (isValidName(this.projectName)) {
+      isProjectNameValid = true;
+      projectInfo.projectName = this.projectName;
+    }
     // 1. 選擇建立項目還是組件
     const { type } = await inquirer.prompt({
       type: 'list',
@@ -152,69 +309,115 @@ class InitCommand extends Command {
       ],
     });
     log.verbose('type', type);
+    this.template = this.template.filter((template) =>
+      template.tag.includes(type)
+    );
+    const title = type === TYPE_PROJECT ? '項目' : '組件';
+    const projectNamePrompt = {
+      type: 'input',
+      name: 'projectName',
+      message: `請輸入${title}名稱`,
+      default: '',
+      validate: function (v) {
+        const done = this.async();
+        setTimeout(function () {
+          // 1. 首字須為英文
+          // 2. 末字須為英文或數字, 不能為其他字符
+          // 3. 特殊字符僅允許"-_"
+          // \w=a-zA-Z0-9
+          if (!isValidName(v)) {
+            done(`請輸入合法的${title}名稱`);
+            return;
+          }
+          done(null, true);
+        }, 0);
+      },
+      filter: function (v) {
+        return v;
+      },
+    };
+    const projectPrompt = [];
+    if (!isProjectNameValid) {
+      projectPrompt.push(projectNamePrompt);
+    }
+    projectPrompt.push(
+      {
+        type: 'input',
+        name: 'projectVersion',
+        message: `請輸入${title}版本`,
+        default: '1.0.0',
+        validate: function (v) {
+          const done = this.async();
+          setTimeout(function () {
+            if (!!!semver.valid(v)) {
+              done('請輸入合法的版本');
+              return;
+            }
+            done(null, true);
+          }, 0);
+        },
+        filter: function (v) {
+          if (!!semver.valid(v)) {
+            return semver.valid(v);
+          } else {
+            return v;
+          }
+        },
+      },
+      {
+        type: 'list',
+        name: 'projectTemplate',
+        choices: this.createTemplateChoice(),
+      }
+    );
     if (type === TYPE_PROJECT) {
       // 2. 取得項目的基本資訊
-      // const project = await inquirer.prompt(projectPrompt);
-      const project = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'projectName',
-          message: '請輸入項目名稱',
-          default: '',
-          validate: function (v) {
-            const done = this.async();
-            setTimeout(function () {
-              // 1. 首字須為英文
-              // 2. 末字須為英文或數字, 不能為其他字符
-              // 3. 特殊字符僅允許"-_"
-              // \w=a-zA-Z0-9
-              if (
-                !/^[a-zA-z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(
-                  v
-                )
-              ) {
-                done(`請輸入合法的項目名稱`);
-                return;
-              }
-              done(null, true);
-            }, 0);
-            // return /^[a-zA-z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(
-            //   v
-            // );
-          },
-          filter: function (v) {
-            return v;
-          },
-        },
-        {
-          type: 'input',
-          name: 'projectVersion',
-          message: '請輸入項目版本',
-          default: '1.0.0',
-          validate: function (v) {
-            return !!semver.valid(v);
-          },
-          filter: function (v) {
-            if (!!semver.valid(v)) {
-              return semver.valid(v);
-            } else {
-              return v;
-            }
-          },
-        },
-        {
-          type: 'list',
-          name: 'projectTemplate',
-          message: '請選擇項目版型',
-          choices: this.createTemplateChoice(),
-        },
-      ]);
+      const project = await inquirer.prompt(projectPrompt);
       projectInfo = {
+        ...projectInfo,
         type,
         ...project,
       };
     } else if (type === TYPE_COMPONENT) {
+      const descriptionPrompt = {
+        type: 'input',
+        name: 'componentDescription',
+        message: '請輸入組件描述資訊',
+        default: '',
+        validate: function (v) {
+          const done = this.async();
+          setTimeout(function () {
+            if (!v) {
+              done('請輸入組件描述資訊');
+              return;
+            }
+            done(null, true);
+          }, 0);
+        },
+      };
+      projectPrompt.push(descriptionPrompt);
+      // 2. 取得組件的基本資訊
+      const component = await inquirer.prompt(projectPrompt);
+      projectInfo = {
+        ...projectInfo,
+        type,
+        ...component,
+      };
     }
+    // 產生classname
+    if (projectInfo.projectName) {
+      projectInfo.name = projectInfo.projectName;
+      projectInfo.className = require('kebab-case')(
+        projectInfo.projectName
+      ).replace(/^-/, '');
+    }
+    if (projectInfo.projectVersion) {
+      projectInfo.version = projectInfo.projectVersion;
+    }
+    if (projectInfo.componentDescription) {
+      projectInfo.description = projectInfo.componentDescription;
+    }
+
     return projectInfo;
   }
   // 當前目錄是否為空
